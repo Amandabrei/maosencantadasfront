@@ -57,10 +57,10 @@ export default function FormArtista({
 
     try {
       if (form.id) {
-        await api.put(`/artistas/${form.id}`, form);
+        await api.put(`/v1/artistas/${form.id}`, form);
         setMensagem("Artista atualizado com sucesso.");
       } else {
-        await api.post("/artistas", form);
+        await api.post("/v1/artistas", form);
         setMensagem("Artista cadastrado com sucesso.");
       }
 

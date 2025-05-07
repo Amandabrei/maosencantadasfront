@@ -38,7 +38,7 @@ export default function FormArtista({
     e.preventDefault();
 
     try {
-      await api.put(`/artistas/${formData.id}`, formData);
+      await api.put(`/v1/artistas/${formData.id}`, formData);
       onSubmitSuccess();
     } catch (error) {
       console.error("Erro ao atualizar artista:", error);

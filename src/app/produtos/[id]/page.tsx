@@ -25,7 +25,7 @@ export default function ProdutosPorArtista() {
 
   useEffect(() => {
     if (id) {
-      api.get(`/produtos/artista/${id}`)
+      api.get(`/v1/produtos/artista/${id}`)
         .then(res => setProdutos(res.data))
         .catch(err => console.error('Erro ao buscar produtos:', err))
         .finally(() => setLoading(false));

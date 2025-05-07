@@ -27,7 +27,7 @@ export default function ProdutosPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get('/produtos')
+    api.get('/v1/produtos')
       .then(response => {
         setProdutos(response.data)
         setLoading(false)

@@ -24,7 +24,7 @@ export default function ListaArtistas() {
 
   const fetchArtistas = () => {
     api
-      .get("/artistas")
+      .get("/v1/artistas")
       .then((res) => setArtistas(res.data))
       .catch(console.error);
   };
@@ -36,7 +36,7 @@ export default function ListaArtistas() {
   const handleDelete = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir este artista?")) return;
     try {
-      await api.delete(`/artistas/${id}`);
+      await api.delete(`/v1/artistas/${id}`);
       fetchArtistas();
     } catch (error) {
       console.error("Erro ao excluir artista:", error);

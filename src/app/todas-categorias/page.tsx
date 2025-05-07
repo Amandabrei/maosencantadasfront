@@ -35,7 +35,7 @@ export default function ProdutosPage() {
 
  
   useEffect(() => {
-    api.get('/categorias')
+    api.get('/v1/categorias')
       .then(response => {
         setCategorias(response.data)
       })

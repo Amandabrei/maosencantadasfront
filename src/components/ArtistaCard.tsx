@@ -16,7 +16,7 @@ export default function ArtistaCard({ artista }: { artista: any }) {
         className="w-full h-48 object-cover rounded-xl" 
       />
       <h2 className="text-lg font-bold mt-2">{artista.nome}</h2>
-      <Link href={`/produtos/${artista.id}`}>
+      <Link href={`/v1/produtos/${artista.id}`}>
         <button className="button mt-4">Ver Produtos</button>
       </Link>
     </div>

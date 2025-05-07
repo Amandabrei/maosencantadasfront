@@ -18,7 +18,7 @@ export default function Home() {
   const [artistas, setArtistas] = useState<Artista[]>([]);
 
   useEffect(() => {
-    api.get('/artistas').then(res => setArtistas(res.data));
+    api.get('/v1/artistas').then(res => setArtistas(res.data));
   }, []);
 
   return (

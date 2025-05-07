@@ -17,9 +17,9 @@ interface Artista {
 }
 
 interface FormArtistaProps {
-  artista?: Artista; 
-  onSave: () => void; 
-  onCancel?: () => void; 
+  artista?: Artista;
+  onSave: () => void;
+  onCancel?: () => void;
 }
 
 export default function FormArtista({ artista, onSave, onCancel }: FormArtistaProps) {
@@ -40,12 +40,11 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
   const uploadImagem = async (file: File): Promise<string | null> => {
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const response = await api.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
       
       const fileName = response.data; 
       return fileName ? fileName : null;
@@ -54,7 +53,6 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
       return null;
     }
   };
-  
 
   useEffect(() => {
     if (artista) {
@@ -75,10 +73,10 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       let artistaData = { ...form };
-  
+
       
       if (fotoFile) {
         const uploadedUrl = await uploadImagem(fotoFile);
@@ -86,15 +84,15 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           artistaData.foto = uploadedUrl;
         }
       }
-  
+
       if (artistaData.id) {
-        const response = await api.put(`/artistas/${artistaData.id}`, artistaData);
+        const response = await api.put(`/v1/artistas/${artistaData.id}`, artistaData);
         console.log("Artista atualizado com sucesso:", response.data);
       } else {
-        const response = await api.post("/artistas", artistaData);
+        const response = await api.post("/v1/artistas", artistaData);
         console.log("Artista cadastrado com sucesso:", response.data);
       }
-  
+
       onSave();
       setForm({
         nome: "",
@@ -112,7 +110,6 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
       console.error("Erro ao salvar artista:", error);
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-2xl p-6 max-w-4xl mx-auto mb-6">
@@ -190,7 +187,6 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           accept="image/*"
           className="border p-2 rounded col-span-2"
         />
-
       </div>
       <div className="flex justify-end mt-4 space-x-2">
         {onCancel && (

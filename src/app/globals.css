@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f0f2f5, #ffffff);
+  color: #333;
+  line-height: 1.6;
+  padding: 1rem;
+}
+
+/* Header e Navbar */
+header, nav {
+  margin-bottom: 2rem;
+}
+
+/* Estilo para o Header */
+.custom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(to right, #e6f1ff, #e0f2fe);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.logo {
+  height: 108px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.site-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* Navbar personalizada */
+.navbar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(to right, #dbeafe, #e0e7ff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  justify-content: center;
+}
+
+.nav-link {
+  color: #374151;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #c7d2fe;
+  color: #1e3a8a;
+  transform: scale(1.05);
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+/* Card dos artistas */
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+/* Título do artista */
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* Botão */
+.button {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #5a75f9, #9569e6);
+  transform: scale(1.05);
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+  .main-container {
+    grid-template-columns: 1fr;
+  }
+  
+}
+
+/* Produto - página de produtos do artista */
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin: 2rem 0;
+  color: #444;
+}
+
+/* Container dos produtos */
+.produto-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 400px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produto-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.produto-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+/* Informações do produto */
+.produto-card h2 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.produto-card p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.4rem;
+}
+
+/* Layout para os cards */
+.produto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}

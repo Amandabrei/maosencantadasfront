@@ -37,18 +37,19 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
     const formData = new FormData();
     formData.append("file", file);
 
-    try {
-      const response = await api.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      
-      const fileName = response.data; 
-      return fileName ? fileName : null;
-    } catch (error) {
-      console.error("Erro no upload da imagem:", error);
-      return null;
-    }
-  };
+    
+      try {
+        const response = await api.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        
+        const filename = response.data.filename;
+        return filename ? filename : null;
+      } catch (error) {
+        console.error("Erro no upload da imagem:", error);
+        return null;
+      }
+    };
 
   useEffect(() => {
     if (produto) {

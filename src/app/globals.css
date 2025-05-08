@@ -26,14 +26,14 @@ header, nav {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: linear-gradient(to right, #e6f1ff, #e0f2fe);
+  background: linear-gradient(to right,rgb(241, 247, 255),rgb(254, 224, 226));
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
 }
 
 .logo {
-  height: 108px;
+  height: 120px;
   transition: transform 0.3s ease;
 }
 
@@ -44,7 +44,7 @@ header, nav {
 .site-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: rgb(36, 103, 129);
   font-family: 'Inter', sans-serif;
 }
 

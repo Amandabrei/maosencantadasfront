@@ -19,7 +19,7 @@ export default function Home() {
               <Link href="/artistas/editar/1">Alterar meus dados</Link>
             </li>
             <li>
-              <Link href="/artistas/cadastrar-produtos">Cadastrar produtos</Link>
+              <Link href="/artistas/cadastrar">Cadastrar produtos</Link>
             </li>
             <li>
               <Link href="/artistas/orcamento">Meus orçamentos</Link>

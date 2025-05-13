@@ -1,7 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import api from "../../../../../services/api";
+import FormArtista from "../../form";
 
 interface Artista {
   id: number;
@@ -16,118 +18,55 @@ interface Artista {
   foto?: string;
 }
 
-interface Props {
-  artistaEditando: Artista;
-  onSubmitSuccess: () => void;
-  onCancelEdit: () => void;
-}
+export default function EditarArtista() {
+  const [artista, setArtista] = useState<Artista | null>(null);
+  const router = useRouter();
+  const params = useParams();
+  const artistaId = params.id as string;
 
-export default function FormArtista({
-  artistaEditando,
-  onSubmitSuccess,
-  onCancelEdit,
-}: Props) {
-  const [formData, setFormData] = useState(artistaEditando);
+  useEffect(() => {
+    const fetchArtista = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+        const response = await api.get(`/v1/artistas/${artistaId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setArtista(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar artista:", error);
+      }
+    };
+
+    if (artistaId) {
+      fetchArtista();
+    }
+  }, [artistaId]);
+
+  const handleSuccess = () => {
+    alert("Artista atualizado com sucesso!");
+    router.push("/admin/artistas");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await api.put(`/v1/artistas/${formData.id}`, formData);
-      onSubmitSuccess();
-    } catch (error) {
-      console.error("Erro ao atualizar artista:", error);
-    }
+  const handleCancel = () => {
+    router.push("/admin/artistas");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <input
-        name="nome"
-        value={formData.nome}
-        onChange={handleChange}
-        placeholder="Nome"
-        className="border p-2 rounded"
-        required
-      />
-      <input
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        placeholder="Email"
-        className="border p-2 rounded"
-        required
-      />
-      <input
-        name="cpf"
-        value={formData.cpf || ""}
-        onChange={handleChange}
-        placeholder="CPF"
-        className="border p-2 rounded"
-      />
-      <input
-        name="endereco"
-        value={formData.endereco || ""}
-        onChange={handleChange}
-        placeholder="Endereço"
-        className="border p-2 rounded"
-      />
-      <input
-        name="telefone"
-        value={formData.telefone || ""}
-        onChange={handleChange}
-        placeholder="Telefone"
-        className="border p-2 rounded"
-      />
-      <input
-        name="whatsapp"
-        value={formData.whatsapp || ""}
-        onChange={handleChange}
-        placeholder="WhatsApp"
-        className="border p-2 rounded"
-      />
-      <input
-        name="insta"
-        value={formData.insta || ""}
-        onChange={handleChange}
-        placeholder="Instagram"
-        className="border p-2 rounded"
-      />
-      <input
-        name="face"
-        value={formData.face || ""}
-        onChange={handleChange}
-        placeholder="Facebook"
-        className="border p-2 rounded"
-      />
-      <input
-        name="foto"
-        value={formData.foto || ""}
-        onChange={handleChange}
-        placeholder="URL da Foto"
-        className="border p-2 rounded"
-      />
-
-      <div className="flex gap-2 col-span-full mt-4">
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Atualizar
-        </button>
-        <button
-          type="button"
-          onClick={onCancelEdit}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-        >
-          Cancelar
-        </button>
-      </div>
-    </form>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Editar Artista</h1>
+      {artista ? (
+        <FormArtista
+          artista={artista}
+          onSave={handleSuccess}
+          onCancel={handleCancel}
+        />
+      ) : (
+        <p>Carregando artista...</p>
+      )}
+    </div>
   );
 }

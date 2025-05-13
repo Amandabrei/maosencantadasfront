@@ -37,41 +37,45 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
 
   const [fotoFile, setFotoFile] = useState<File | null>(null);
 
+  
   const uploadImagem = async (file: File): Promise<string | null> => {
     const formData = new FormData();
     formData.append("file", file);
 
-    
-      try {
-        const response = await api.post("/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        
-        const filename = response.data.filename;
-        return filename ? filename : null;
-      } catch (error) {
-        console.error("Erro no upload da imagem:", error);
-        return null;
-      }
-    };
+    try {
+      const response = await api.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
+      const url = response.data.url; 
+      return url ? url : null;
+    } catch (error) {
+      console.error("Erro no upload da imagem:", error);
+      return null;
+    }
+  };
+
+  
   useEffect(() => {
     if (artista) {
       setForm(artista);
     }
   }, [artista]);
 
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFotoFile(e.target.files[0]);
     }
   };
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -82,10 +86,11 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
       if (fotoFile) {
         const uploadedUrl = await uploadImagem(fotoFile);
         if (uploadedUrl) {
-          artistaData.foto = uploadedUrl;
+          artistaData.foto = uploadedUrl;  
         }
       }
 
+      
       if (artistaData.id) {
         const response = await api.put(`/v1/artistas/${artistaData.id}`, artistaData);
         console.log("Artista atualizado com sucesso:", response.data);
@@ -94,7 +99,12 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
         console.log("Artista cadastrado com sucesso:", response.data);
       }
 
-      onSave();
+      
+      if (onSave && typeof onSave === 'function') {
+        onSave();  
+      }
+
+      
       setForm({
         nome: "",
         email: "",
@@ -128,7 +138,7 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           className="border p-2 rounded"
         />
         <input
-          type="cpf"
+          type="text"
           name="cpf"
           placeholder="Cpf"
           value={form.cpf}
@@ -137,7 +147,7 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           className="border p-2 rounded"
         />
         <input
-          type="endereco"
+          type="text"
           name="endereco"
           placeholder="Endereco"
           value={form.endereco}
@@ -155,7 +165,7 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           className="border p-2 rounded"
         />
         <input
-          type="telefone"
+          type="text"
           name="telefone"
           placeholder="Telefone"
           value={form.telefone}
@@ -164,7 +174,7 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           className="border p-2 rounded"
         />
         <input
-          type="whatsapp"
+          type="text"
           name="whatsapp"
           placeholder="Whatsapp"
           value={form.whatsapp}
@@ -173,10 +183,19 @@ export default function FormArtista({ artista, onSave, onCancel }: FormArtistaPr
           className="border p-2 rounded"
         />
         <input
-          type="insta"
+          type="text"
           name="insta"
           placeholder="Instagram"
           value={form.insta}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
+        <input
+          type="text"
+          name="face"
+          placeholder="Facebook"
+          value={form.face}
           onChange={handleChange}
           required
           className="border p-2 rounded"

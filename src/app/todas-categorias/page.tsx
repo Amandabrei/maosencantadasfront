@@ -5,7 +5,7 @@ import ProdutoCard from '../../components/ProdutoCard'
 import { api } from '../../services/api' 
 import Navbar from '../../components/Navbar' 
 import Footer from '../../components/Footer' 
-import Header from '@components/components/Header'
+import Header from '../../components/Header'
 import '../globals.css';
 
 interface Produto {
@@ -33,26 +33,27 @@ export default function ProdutosPage() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
- 
+  // Carregar categorias
   useEffect(() => {
     api.get('/v1/categorias')
       .then(response => {
-        setCategorias(response.data)
+        setCategorias(response.data || [])
       })
       .catch(error => {
         console.error('Erro ao carregar categorias:', error)
       })
   }, [])
 
+  // Carregar produtos (todos ou por categoria)
   useEffect(() => {
     const endpoint = categoriaSelecionada
-      ? `/produtos/categoria/${categoriaSelecionada}`
-      : '/produtos'
+      ? `/v1/produtos/categoria/${categoriaSelecionada}`
+      : '/v1/produtos'
 
     setLoading(true)
     api.get(endpoint)
       .then(response => {
-        setProdutos(response.data)
+        setProdutos(response.data || [])
       })
       .catch(error => {
         console.error('Erro ao carregar produtos:', error)
@@ -91,7 +92,7 @@ export default function ProdutosPage() {
           </select>
         </div>
 
-        {/* Cabeçalho do filtro */}
+        {/* Cabeçalho e botão de limpar filtro */}
         {!loading && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">
@@ -99,7 +100,6 @@ export default function ProdutosPage() {
                 ? `Produtos da categoria: ${categorias.find(c => c.id === categoriaSelecionada)?.nome}`
                 : 'Todos os produtos'}
             </h2>
-
             {categoriaSelecionada && (
               <button
                 className="text-sm text-pink-600 hover:underline"

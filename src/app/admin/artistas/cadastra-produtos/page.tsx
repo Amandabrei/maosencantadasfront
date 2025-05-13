@@ -24,7 +24,7 @@ export default function CadastrarProduto() {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:8080/v1/produtos', produto); // ou sua URL real
+      await axios.post('http://localhost:8080/v1/produtos', produto); 
       setMensagem('Produto cadastrado com sucesso!');
       setProduto({
         nome: '',

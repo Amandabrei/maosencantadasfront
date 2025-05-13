@@ -16,15 +16,17 @@ interface ArtistaForm {
   foto: string;
 }
 
+interface FormArtistaProps {
+  artistaEditando: ArtistaForm | null;
+  onSubmitSuccess: () => void;
+  onCancelEdit?: () => void;
+}
+
 export default function FormArtista({
   artistaEditando,
   onSubmitSuccess,
   onCancelEdit
-}: {
-  artistaEditando: ArtistaForm | null;
-  onSubmitSuccess: () => void;
-  onCancelEdit?: () => void;
-}) {
+}: FormArtistaProps) {
   const { role } = useAuth();
   const [form, setForm] = useState<ArtistaForm>({
     nome: "",
@@ -86,52 +88,48 @@ export default function FormArtista({
 
   return (
     <form
-    onSubmit={(e) => {
-      e.preventDefault();
-      handleSubmit();
-    }}
-    className="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-6 mb-8"
-  >
-    <h3 className="text-xl font-bold mb-6 text-center text-indigo-800">
-      {form.id ? "Editar Artista" : "Cadastrar Novo Artista"}
-    </h3>
-  
-    {Object.keys(form).map((key) => (
-      <div key={key} className="mb-4">
-        <label className="block mb-1 capitalize text-sm font-semibold text-gray-700">
-          {key}
-        </label>
-        <input
-          name={key}
-          value={form[key as keyof ArtistaForm]}
-          onChange={handleChange}
-          type="text"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
-        />
-      </div>
-    ))}
-  
-    <div className="flex justify-between mt-6">
-      <button
-        type="submit"
-        className="button"
-      >
-        {form.id ? "Atualizar" : "Cadastrar"}
-      </button>
-  
-      {form.id && onCancelEdit && (
-        <button
-          type="button"
-          onClick={onCancelEdit}
-          className="button bg-red-400 hover:bg-red-500"
-        >
-          Cancelar
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-6 mb-8"
+    >
+      <h3 className="text-xl font-bold mb-6 text-center text-indigo-800">
+        {form.id ? "Editar Artista" : "Cadastrar Novo Artista"}
+      </h3>
+
+      {Object.keys(form).map((key) => (
+        <div key={key} className="mb-4">
+          <label className="block mb-1 capitalize text-sm font-semibold text-gray-700">
+            {key}
+          </label>
+          <input
+            name={key}
+            value={form[key as keyof ArtistaForm]}
+            onChange={handleChange}
+            type="text"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          />
+        </div>
+      ))}
+
+      <div className="flex justify-between mt-6">
+        <button type="submit" className="button">
+          {form.id ? "Atualizar" : "Cadastrar"}
         </button>
-      )}
-    </div>
-  
-    {mensagem && <p className="mt-4 text-sm text-green-700">{mensagem}</p>}
-  </form>
-  
+
+        {form.id && onCancelEdit && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            className="button bg-red-400 hover:bg-red-500"
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
+
+      {mensagem && <p className="mt-4 text-sm text-green-700">{mensagem}</p>}
+    </form>
   );
 }

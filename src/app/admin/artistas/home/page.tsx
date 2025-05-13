@@ -1,36 +1,35 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import CadastrarProduto from '../cadastra-produtos'; 
+export default function Dashboard() {
+  const router = useRouter();
+  const [conteudoSelecionado, setConteudoSelecionado] = useState<'editar' | 'orcamentos' | 'produtos' | null>(null);
 
-export default function Home() {
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-blue-500 p-4 text-white">
-        <h1 className="text-xl font-bold">Minha Plataforma</h1>
+      <header className="bg-green-200 p-4 text-white flex items-center justify-center gap-4">
+        <img src="/logo.png" alt="Logo" className="h-12 w-auto" />
+        <h1 className="text-xl font-bold text-pink-800">Área de Artistas</h1>
       </header>
 
       <div className="flex flex-1">
         {/* Menu à esquerda */}
         <nav className="bg-gray-200 w-64 p-4">
-          <ul>
-            <li>
-              <Link href="/artistas/editar/1">Alterar meus dados</Link>
-            </li>
-            <li>
-              <Link href="/artistas/cadastrar">Cadastrar produtos</Link>
-            </li>
-            <li>
-              <Link href="/artistas/orcamento">Meus orçamentos</Link>
-            </li>
+          <ul className="space-y-2">
+            <li><button onClick={() => setConteudoSelecionado('editar')}>Alterar meus dados</button></li>
+            <li><button onClick={() => setConteudoSelecionado('orcamentos')}>Meus orçamentos</button></li>
+            <li><button onClick={() => setConteudoSelecionado('produtos')}>Meus produtos</button></li>
           </ul>
         </nav>
 
         {/* Conteúdo à direita */}
-        <div className="flex-1 p-6">
-         
-          <CadastrarProduto />
+        <div className="flex-1 p-6 bg-white shadow-inner rounded-md">
+          {conteudoSelecionado === 'editar' && <FormularioDadosArtista />}
+          {conteudoSelecionado === 'orcamentos' && <Orcamentos />}
+          {conteudoSelecionado === 'produtos' && <ProdutosList />}
+          {!conteudoSelecionado && <p>Selecione uma opção no menu ao lado.</p>}
         </div>
       </div>
     </div>

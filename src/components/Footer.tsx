@@ -40,6 +40,12 @@ export default function Footer({ artistaId = 0 }: FooterProps) {
           maosencantadas © 2025 – Todos os direitos reservados
         </p>
 
+        <div className="flex space-x-10 text-xs text-gray-600">
+          <a href="/termo-uso" className="mx-10 hover:underline hover:text-pink-600">Termos de Uso</a>
+          <a href="/politica-privacidade" className="mx-10 hover:underline hover:text-pink-600">Política de Privacidade</a>
+          <a href="/politica-devolucao" className="mx-10 hover:underline hover:text-pink-600">Política de Devolução e Reembolso</a>
+        </div>
+
         {artista && (
           <div className="flex space-x-8 text-xl text-pink-600">
             {artista.insta && (

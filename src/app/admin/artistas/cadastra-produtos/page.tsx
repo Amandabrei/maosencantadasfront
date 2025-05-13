@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function CadastrarProduto() {
@@ -13,9 +13,36 @@ export default function CadastrarProduto() {
     categoriaId: '',
     artistaId: '',
   });
+
+  const [categorias, setCategorias] = useState([]);
+  const [artistas, setArtistas] = useState([]);
   const [mensagem, setMensagem] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Buscar categorias e artistas ao carregar a página
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/v1/categorias');
+        setCategorias(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar categorias:', error);
+      }
+    };
+
+    const fetchArtistas = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/v1/artistas');
+        setArtistas(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar artistas:', error);
+      }
+    };
+
+    fetchCategorias();
+    fetchArtistas();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProduto({ ...produto, [name]: value });
   };
@@ -47,6 +74,7 @@ export default function CadastrarProduto() {
       {mensagem && <div className="mb-4 text-red-500">{mensagem}</div>}
       
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Nome */}
         <div>
           <label htmlFor="nome" className="block text-lg">Nome</label>
           <input
@@ -60,6 +88,7 @@ export default function CadastrarProduto() {
           />
         </div>
 
+        {/* Descrição */}
         <div>
           <label htmlFor="descricao" className="block text-lg">Descrição</label>
           <input
@@ -73,6 +102,7 @@ export default function CadastrarProduto() {
           />
         </div>
 
+        {/* Tamanho */}
         <div>
           <label htmlFor="tamanho" className="block text-lg">Tamanho</label>
           <input
@@ -86,6 +116,7 @@ export default function CadastrarProduto() {
           />
         </div>
 
+        {/* Preço */}
         <div>
           <label htmlFor="preco" className="block text-lg">Preço</label>
           <input
@@ -99,32 +130,47 @@ export default function CadastrarProduto() {
           />
         </div>
 
+        {/* Categoria */}
         <div>
           <label htmlFor="categoriaId" className="block text-lg">Categoria</label>
-          <input
-            type="text"
+          <select
             id="categoriaId"
             name="categoriaId"
             value={produto.categoriaId}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full"
             required
-          />
+          >
+            <option value="">Selecione uma categoria</option>
+            {categorias.map((categoria: any) => (
+              <option key={categoria.id} value={categoria.id}>
+                {categoria.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* Artista */}
         <div>
           <label htmlFor="artistaId" className="block text-lg">Artista</label>
-          <input
-            type="text"
+          <select
             id="artistaId"
             name="artistaId"
             value={produto.artistaId}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full"
             required
-          />
+          >
+            <option value="">Selecione um artista</option>
+            {artistas.map((artista: any) => (
+              <option key={artista.id} value={artista.id}>
+                {artista.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* Imagem */}
         <div>
           <label htmlFor="imagemUrl" className="block text-lg">Imagem</label>
           <input
@@ -138,6 +184,7 @@ export default function CadastrarProduto() {
           />
         </div>
 
+        {/* Botão */}
         <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
           Cadastrar Produto
         </button>

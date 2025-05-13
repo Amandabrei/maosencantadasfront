@@ -4,14 +4,24 @@ import { useState, useEffect } from "react";
 import api from "../../../../services/api";
 
 interface Produto {
-    id: number;
-    nome: string;
-    descricao?: string;
-    tamanho?: string;
-    imagemUrl?: string;
-    preco?: string;
-    categoria_id?: string;
-    artista_id?: string;
+  id?: number;
+  nome: string;
+  descricao: string;
+  tamanho?: string;
+  imagemUrl?: string;
+  preco?: string;
+  categoriaId?: string;
+  artistaId?: string;
+}
+
+interface Categoria {
+  id: number;
+  nome: string;
+}
+
+interface Artista {
+  id: number;
+  nome: string;
 }
 
 interface FormProdutoProps {
@@ -25,39 +35,48 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
     nome: "",
     descricao: "",
     tamanho: "",
-    imagemurl: "",
+    imagemUrl: "",
     preco: "",
-    categoria_id: "",
-    artista_id: "",
+    categoriaId: "",
+    artistaId: "",
   });
 
   const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [artistas, setArtistas] = useState<Artista[]>([]);
 
-  const uploadImagem = async (file: File): Promise<string | null> => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    
+  // Carregar categorias e artistas
+  useEffect(() => {
+    const fetchCategorias = async () => {
       try {
-        const response = await api.post("/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        
-        const filename = response.data.filename;
-        return filename ? filename : null;
+        const response = await api.get("/v1/categorias");
+        setCategorias(response.data);
       } catch (error) {
-        console.error("Erro no upload da imagem:", error);
-        return null;
+        console.error("Erro ao buscar categorias:", error);
       }
     };
 
+    const fetchArtistas = async () => {
+      try {
+        const response = await api.get("/v1/artistas");
+        setArtistas(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar artistas:", error);
+      }
+    };
+
+    fetchCategorias();
+    fetchArtistas();
+  }, []);
+
+  // Preencher form ao editar
   useEffect(() => {
     if (produto) {
       setForm(produto);
     }
   }, [produto]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -68,37 +87,53 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
     }
   };
 
+  const uploadImagem = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await api.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      return response.data.url || null;
+    } catch (error) {
+      console.error("Erro no upload da imagem:", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       let produtoData = { ...form };
 
-      
       if (fotoFile) {
         const uploadedUrl = await uploadImagem(fotoFile);
         if (uploadedUrl) {
-          produtoData.foto = uploadedUrl;
+          produtoData.imagemUrl = uploadedUrl;
         }
       }
 
       if (produtoData.id) {
-        const response = await api.put(`/v1/produtos/${produtoData.id}`, produtoData);
-        console.log("Produto atualizado com sucesso:", response.data);
+        await api.put(`/v1/produtos/${produtoData.id}`, produtoData);
+        console.log("Produto atualizado com sucesso!");
       } else {
-        const response = await api.post("/v1/produtos", produtoData);
-        console.log("Produto cadastrado com sucesso:", response.data);
+        await api.post("/v1/produtos", produtoData);
+        console.log("Produto cadastrado com sucesso!");
       }
 
       onSave();
+
       setForm({
         nome: "",
         descricao: "",
         tamanho: "",
-        imagemurl: "",
+        imagemUrl: "",
         preco: "",
-        categoria_id: "",
-        artista_id: "",
+        categoriaId: "",
+        artistaId: "",
       });
       setFotoFile(null);
     } catch (error) {
@@ -122,16 +157,16 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
           className="border p-2 rounded"
         />
         <input
-          type="descricao"
+          type="text"
           name="descricao"
-          placeholder="Descricao"
+          placeholder="Descrição"
           value={form.descricao}
           onChange={handleChange}
           required
           className="border p-2 rounded"
         />
         <input
-          type="tamanho"
+          type="text"
           name="tamanho"
           placeholder="Tamanho"
           value={form.tamanho}
@@ -139,34 +174,44 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
           required
           className="border p-2 rounded"
         />
-        
         <input
-          type="telefone"
-          name="telefone"
-          placeholder="Telefone"
-          value={form.telefone}
+          type="text"
+          name="preco"
+          placeholder="Preço"
+          value={form.preco}
           onChange={handleChange}
           required
           className="border p-2 rounded"
         />
-        <input
-          type="categoria"
-          name="categoria"
-          placeholder="Categoria"
-          value={form.categoria_id}
+
+        {/* Select Categoria */}
+        <select
+          name="categoriaId"
+          value={form.categoriaId}
           onChange={handleChange}
           required
           className="border p-2 rounded"
-        />
-        <input
-          type="artista"
-          name="artista"
-          placeholder="Artista"
-          value={form.artista_id}
+        >
+          <option value="">Selecione uma Categoria</option>
+          {categorias.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.nome}</option>
+          ))}
+        </select>
+
+        {/* Select Artista */}
+        <select
+          name="artistaId"
+          value={form.artistaId}
           onChange={handleChange}
           required
           className="border p-2 rounded"
-        />
+        >
+          <option value="">Selecione um Artista</option>
+          {artistas.map((art) => (
+            <option key={art.id} value={art.id}>{art.nome}</option>
+          ))}
+        </select>
+
         <input
           type="file"
           name="foto"
@@ -175,6 +220,7 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
           className="border p-2 rounded col-span-2"
         />
       </div>
+
       <div className="flex justify-end mt-4 space-x-2">
         {onCancel && (
           <button

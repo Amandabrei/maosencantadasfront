@@ -1,191 +1,136 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../../../services/api'; 
 
 export default function CadastrarProduto() {
   const [produto, setProduto] = useState({
     nome: '',
     descricao: '',
     tamanho: '',
-    imagemUrl: '',
     preco: '',
     categoriaId: '',
     artistaId: '',
+    imagemUrl: '',
   });
 
   const [categorias, setCategorias] = useState([]);
   const [artistas, setArtistas] = useState([]);
+  const [imagemFile, setImagemFile] = useState<File | null>(null);
   const [mensagem, setMensagem] = useState('');
 
-  // Buscar categorias e artistas ao carregar a página
+  
   useEffect(() => {
-    const fetchCategorias = async () => {
+    const fetchDados = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/v1/categorias');
-        setCategorias(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar categorias:', error);
+        const [catRes, artRes] = await Promise.all([
+          api.get('/v1/categorias'),
+          api.get('/v1/artistas'),
+        ]);
+        setCategorias(catRes.data);
+        setArtistas(artRes.data);
+      } catch (err) {
+        console.error('Erro ao buscar categorias ou artistas:', err);
       }
     };
 
-    const fetchArtistas = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/v1/artistas');
-        setArtistas(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar artistas:', error);
-      }
-    };
-
-    fetchCategorias();
-    fetchArtistas();
+    fetchDados();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setProduto({ ...produto, [name]: value });
+    setProduto((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImagemFile(e.target.files[0]);
+    }
+  };
+
+  const uploadImagem = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      return response.data.url || null;
+    } catch (err) {
+      console.error('Erro ao fazer upload da imagem:', err);
+      return null;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMensagem('');
 
     try {
-      await axios.post('http://localhost:8080/v1/produtos', produto); 
+      let imagemUrl = produto.imagemUrl;
+
+      if (imagemFile) {
+        const uploadedUrl = await uploadImagem(imagemFile);
+        if (uploadedUrl) imagemUrl = uploadedUrl;
+      }
+
+      const novoProduto = {
+        ...produto,
+        preco: parseFloat(produto.preco),
+        imagemUrl,
+      };
+
+      await api.post('/v1/produtos', novoProduto);
       setMensagem('Produto cadastrado com sucesso!');
       setProduto({
         nome: '',
         descricao: '',
         tamanho: '',
-        imagemUrl: '',
         preco: '',
         categoriaId: '',
         artistaId: '',
+        imagemUrl: '',
       });
-    } catch (error) {
-      console.error(error);
-      setMensagem('Erro ao cadastrar o produto. Tente novamente.');
+      setImagemFile(null);
+    } catch (err) {
+      console.error('Erro ao cadastrar produto:', err);
+      setMensagem('Erro ao cadastrar o produto. Verifique os dados.');
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Cadastrar Produto</h2>
-      {mensagem && <div className="mb-4 text-red-500">{mensagem}</div>}
-      
+      {mensagem && <p className="mb-4 text-red-500">{mensagem}</p>}
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Nome */}
-        <div>
-          <label htmlFor="nome" className="block text-lg">Nome</label>
-          <input
-            type="text"
-            id="nome"
-            name="nome"
-            value={produto.nome}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          />
-        </div>
+        <input type="text" name="nome" placeholder="Nome" value={produto.nome} onChange={handleChange} required className="border p-2 w-full rounded" />
 
-        {/* Descrição */}
-        <div>
-          <label htmlFor="descricao" className="block text-lg">Descrição</label>
-          <input
-            type="text"
-            id="descricao"
-            name="descricao"
-            value={produto.descricao}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          />
-        </div>
+        <input type="text" name="descricao" placeholder="Descrição" value={produto.descricao} onChange={handleChange} required className="border p-2 w-full rounded" />
 
-        {/* Tamanho */}
-        <div>
-          <label htmlFor="tamanho" className="block text-lg">Tamanho</label>
-          <input
-            type="text"
-            id="tamanho"
-            name="tamanho"
-            value={produto.tamanho}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          />
-        </div>
+        <input type="text" name="tamanho" placeholder="Tamanho" value={produto.tamanho} onChange={handleChange} required className="border p-2 w-full rounded" />
 
-        {/* Preço */}
-        <div>
-          <label htmlFor="preco" className="block text-lg">Preço</label>
-          <input
-            type="text"
-            id="preco"
-            name="preco"
-            value={produto.preco}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          />
-        </div>
+        <input type="number" name="preco" placeholder="Preço" value={produto.preco} onChange={handleChange} required className="border p-2 w-full rounded" />
 
-        {/* Categoria */}
-        <div>
-          <label htmlFor="categoriaId" className="block text-lg">Categoria</label>
-          <select
-            id="categoriaId"
-            name="categoriaId"
-            value={produto.categoriaId}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          >
-            <option value="">Selecione uma categoria</option>
-            {categorias.map((categoria: any) => (
-              <option key={categoria.id} value={categoria.id}>
-                {categoria.nome}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select name="categoriaId" value={produto.categoriaId} onChange={handleChange} required className="border p-2 w-full rounded">
+          <option value="">Selecione uma categoria</option>
+          {categorias.map((cat: any) => (
+            <option key={cat.id} value={cat.id}>{cat.nome}</option>
+          ))}
+        </select>
 
-        {/* Artista */}
-        <div>
-          <label htmlFor="artistaId" className="block text-lg">Artista</label>
-          <select
-            id="artistaId"
-            name="artistaId"
-            value={produto.artistaId}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          >
-            <option value="">Selecione um artista</option>
-            {artistas.map((artista: any) => (
-              <option key={artista.id} value={artista.id}>
-                {artista.nome}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select name="artistaId" value={produto.artistaId} onChange={handleChange} required className="border p-2 w-full rounded">
+          <option value="">Selecione um artista</option>
+          {artistas.map((art: any) => (
+            <option key={art.id} value={art.id}>{art.nome}</option>
+          ))}
+        </select>
 
-        {/* Imagem */}
-        <div>
-          <label htmlFor="imagemUrl" className="block text-lg">Imagem</label>
-          <input
-            type="text"
-            id="imagemUrl"
-            name="imagemUrl"
-            value={produto.imagemUrl}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full"
-            required
-          />
-        </div>
+        <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 w-full rounded" />
 
-        {/* Botão */}
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
           Cadastrar Produto
         </button>
       </form>

@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 
 import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
@@ -11,15 +11,34 @@ import '../globals.css';
 interface Artista {
   id: number;
   nome: string;
-  imagemUrl: string;
+  foto: string;
+  categoriaId: number;  // Assumindo que os artistas têm um campo categoriaId
+}
+
+interface Categoria {
+  id: number;
+  nome: string;
 }
 
 export default function Home() {
   const [artistas, setArtistas] = useState<Artista[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
 
+  // Carregar os artistas
   useEffect(() => {
     api.get('/v1/artistas').then(res => setArtistas(res.data));
   }, []);
+
+  // Carregar as categorias
+  useEffect(() => {
+    api.get('/v1/categorias').then(res => setCategorias(res.data));
+  }, []);
+
+  // Função para pegar o nome da categoria baseado no categoriaId
+  const getCategoriaNome = (categoriaId: number) => {
+    const categoria = categorias.find(cat => cat.id === categoriaId);
+    return categoria ? categoria.nome : 'Categoria não encontrada';
+  };
 
   return (
     <div>
@@ -27,7 +46,11 @@ export default function Home() {
       <Navbar />
       <main className="main-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
         {artistas.map(artista => (
-          <ArtistaCard key={artista.id} artista={artista} />
+          <ArtistaCard 
+            key={artista.id} 
+            artista={artista} 
+            categoria={getCategoriaNome(artista.categoriaId)} // Passando o nome da categoria
+          />
         ))}
       </main>
       <Footer />

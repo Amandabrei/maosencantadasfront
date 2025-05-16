@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import ProdutoCard from '../../components/ProdutoCard'
-import { api } from '../../services/api' 
-import Navbar from '../../components/Navbar' 
-import Footer from '../../components/Footer' 
+import { api } from '../../services/api'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 import Header from '@components/components/Header'
-import '../globals.css';
+import '../globals.css'
 
 interface Produto {
   id: number
@@ -40,8 +40,8 @@ export default function ProdutosPage() {
 
   return (
     <div>
-     <Header />
-     <Navbar />
+      <Header />
+      <Navbar />
 
       <div className="p-6">
         {loading ? (

@@ -16,13 +16,14 @@ interface Artista {
   insta?: string;
   face?: string;
   foto?: string;
+  categoriaId?: string | number;
 }
 
 export default function EditarArtista() {
   const [artista, setArtista] = useState<Artista | null>(null);
   const router = useRouter();
   const params = useParams();
-  const artistaId = params.id as string;
+  const artistaId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   useEffect(() => {
     const fetchArtista = async () => {
@@ -35,7 +36,10 @@ export default function EditarArtista() {
           },
         });
 
-        setArtista(response.data);
+        setArtista({
+          ...response.data,
+          id: Number(artistaId), 
+        });
       } catch (error) {
         console.error("Erro ao buscar artista:", error);
       }

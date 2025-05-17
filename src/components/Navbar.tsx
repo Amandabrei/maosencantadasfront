@@ -9,7 +9,7 @@ export default function Navbar() {
       <Link href="/quero-vender" className="nav-link">Quero Vender</Link>
       <Link href="/quero-comprar" className="nav-link">Quero Comprar</Link>
       <Link href="/sobre-nos" className="nav-link">Sobre nós</Link>
-      <Link href="/todas-categorias" className="nav-link">Login/Cadastro</Link>
+      <Link href="/login" className="nav-link">Login/Cadastro</Link>
     </nav>
   );
 }

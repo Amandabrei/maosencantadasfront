@@ -12,7 +12,7 @@ interface Artista {
   id: number;
   nome: string;
   foto: string;
-  categoriaId: number;  // Assumindo que os artistas têm um campo categoriaId
+  categoriaId: number;  
 }
 
 interface Categoria {
@@ -24,17 +24,17 @@ export default function Home() {
   const [artistas, setArtistas] = useState<Artista[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
 
-  // Carregar os artistas
+  
   useEffect(() => {
     api.get('/v1/artistas').then(res => setArtistas(res.data));
   }, []);
 
-  // Carregar as categorias
+  
   useEffect(() => {
     api.get('/v1/categorias').then(res => setCategorias(res.data));
   }, []);
 
-  // Função para pegar o nome da categoria baseado no categoriaId
+  
   const getCategoriaNome = (categoriaId: number) => {
     const categoria = categorias.find(cat => cat.id === categoriaId);
     return categoria ? categoria.nome : 'Categoria não encontrada';
@@ -49,7 +49,7 @@ export default function Home() {
           <ArtistaCard 
             key={artista.id} 
             artista={artista} 
-            categoria={getCategoriaNome(artista.categoriaId)} // Passando o nome da categoria
+            categoria={getCategoriaNome(artista.categoriaId)} 
           />
         ))}
       </main>

@@ -1,17 +1,23 @@
+// src/services/authService.ts
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:8080/api', // ✅ Certifique-se que está SEM /api ou barra extra
+  baseURL: 'http://localhost:8080/api', // backend base
 });
 
+// Login e armazenamento do token na sessionStorage
 const login = async (login: string, password: string): Promise<boolean> => {
   try {
     const response = await API.post('/auth/login', {
       login,
       password,
     });
+
     const { token } = response.data;
-    localStorage.setItem('token', token);
+
+    
+    sessionStorage.setItem('token', token);
+
     return true;
   } catch (error) {
     console.error('Erro no login:', error);
@@ -19,6 +25,12 @@ const login = async (login: string, password: string): Promise<boolean> => {
   }
 };
 
+
+const getToken = (): string | null => {
+  return sessionStorage.getItem('token');
+};
+
 export default {
   login,
+  getToken,
 };

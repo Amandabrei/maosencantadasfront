@@ -1,113 +1,85 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useAuth } from "../../types/AuthContext";
-import api from "../../../services/api";
+import { useEffect, useState } from 'react'
+import { api } from '../../../services/api'
 
-interface OrcamentoForm {
-  id?: number;
-  status: string;
-  dataOrcamento: string;
-  imagemUrl: string;
-  clienteId: string;
-  produtoId: string;
+interface Orcamento {
+  id: number
+  numero: string
+  dataOrcamento: string
+  status: 'PENDENTE' | 'APROVADO' | 'REPROVADO'
+  imagemUrl: string
 }
 
-export default function FormOrcamento({
-  orcamentoEditando,
-  onSubmitSuccess,
-  onCancelEdit,
-}: {
-  orcamentoEditando: OrcamentoForm | null;
-  onSubmitSuccess: () => void;
-  onCancelEdit?: () => void;
-}) {
-  const { role } = useAuth();
-  const [form, setForm] = useState<OrcamentoForm>({
-    status: "",
-    dataOrcamento: "",
-    imagemUrl: "",
-    clienteId: "",
-    produtoId: "",
-  });
-  const [mensagem, setMensagem] = useState("");
+interface Cliente {
+  id: number
+  nome: string
+}
+
+export default function ListaOrcamentos() {
+  const [cliente, setCliente] = useState<Cliente | null>(null)
+  const [orcamentos, setOrcamentos] = useState<Orcamento[]>([])
 
   useEffect(() => {
-    if (orcamentoEditando) {
-      setForm(orcamentoEditando);
+    const clienteId = localStorage.getItem('clienteId')
+
+    if (!clienteId) {
+      console.error('Cliente não autenticado')
+      return
     }
-  }, [orcamentoEditando]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    api.get(`/v1/clientes/${clienteId}`)
+      .then(res => setCliente(res.data))
+      .catch(err => console.error('Erro ao buscar cliente:', err))
 
-  const handleSubmit = async () => {
+    api.get(`/v1/orcamentos/cliente/${clienteId}`)
+      .then(res => setOrcamentos(res.data))
+      .catch(err => console.error('Erro ao buscar orçamentos:', err))
+  }, [])
+
+  const aprovarOrcamento = async (id: number) => {
     try {
-      if (form.id) {
-        await api.put(`/v1/orcamentos/${form.id}`, form);
-        setMensagem("Orçamento respondido com sucesso.");
-      } else {
-        await api.post("/v1/orcamentos", form);
-        setMensagem("Orçamento criado com sucesso.");
-      }
-      onSubmitSuccess();
-    } catch (error: any) {
-      setMensagem(`Erro: ${error.response?.data?.message || error.message}`);
+      await api.put(`/v1/orcamentos/${id}/aprovar`)
+      setOrcamentos(prev =>
+        prev.map(o => (o.id === id ? { ...o, status: 'APROVADO' } : o))
+      )
+    } catch (err) {
+      console.error('Erro ao aprovar orçamento:', err)
     }
-  };
-
-  if (role !== "ADMIN") return <p>Acesso restrito.</p>;
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-      className="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-6 mb-8"
-    >
-      <h3 className="text-xl font-bold mb-6 text-center text-indigo-800">
-        Responder Orçamento
-      </h3>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold">Orçamentos de: {cliente?.nome}</h2>
 
-      {Object.keys(form).map((key) => (
-        key !== "id" && (
-          <div key={key} className="mb-4">
-            <label className="block mb-1 capitalize text-sm font-semibold text-gray-700">
-              {key}
-            </label>
-            <input
-              name={key}
-              value={form[key as keyof OrcamentoForm]}
-              onChange={handleChange}
-              type="text"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+      <div className="grid grid-cols-1 gap-4 mt-6">
+        {orcamentos.map(orcamento => (
+          <div key={orcamento.id} className="border p-4 rounded-lg shadow">
+            <div className="flex justify-between items-center">
+              <div className="font-bold">Orçamento #{orcamento.id}</div>
+              <div className="text-sm text-gray-600">
+                {orcamento.dataOrcamento.split('T')[0]}
+              </div>
+              <div className={`font-semibold ${orcamento.status === 'PENDENTE' ? 'text-yellow-500' : 'text-green-600'}`}>
+                {orcamento.status}
+              </div>
+            </div>
+            <img
+              src={`http://localhost:8080/api/files/${orcamento.imagemUrl}`}
+              alt="Imagem do produto"
+              className="mt-4 w-full h-48 object-cover rounded-md"
             />
+            {orcamento.status === 'PENDENTE' && (
+              <button
+                onClick={() => aprovarOrcamento(orcamento.id)}
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+              >
+                Aprovar Orçamento
+              </button>
+            )}
           </div>
-        )
-      ))}
-
-      <div className="flex justify-between mt-6">
-        <button
-          type="submit"
-          className="button"
-        >
-          Salvar Resposta
-        </button>
-
-        {onCancelEdit && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="button bg-gray-400 hover:bg-gray-500"
-          >
-            Cancelar
-          </button>
-        )}
+        ))}
       </div>
-
-      {mensagem && <p className="mt-4 text-sm text-green-700">{mensagem}</p>}
-    </form>
-  );
+    </div>
+  )
 }

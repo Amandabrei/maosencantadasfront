@@ -15,8 +15,8 @@ export default function ArtistaCard({ artista, categoria }: { artista: any, cate
         className="w-full h-48 object-cover rounded-xl" 
       />
       <h2 className="text-lg font-bold mt-2">{artista.nome}</h2>
-      <p className="text-sm text-gray-500 mt-1">{categoria}</p> {/* Exibe o nome da categoria abaixo do nome do artista */}
-      <Link href={`http://localhost:8080/api/v1/produtos?artista_id=${artista.id}`}>
+      <p className="text-sm text-gray-500 mt-1">{categoria}</p> 
+      <Link href={`/produtos/${artista.id}`}>
         <button className="button mt-4">Ver Produtos</button>
       </Link>
     </div>

@@ -11,9 +11,11 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const success = await authService.login(login, password);
+
     if (success) {
-      router.push('/dashboard');
+      router.push('/dashboard'); // depois coloco a pagina correta
     } else {
       alert('Login ou senha inválidos');
     }

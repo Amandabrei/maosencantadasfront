@@ -33,7 +33,7 @@ export default function ProdutosPage() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Carregar categorias
+  
   useEffect(() => {
     api.get('/v1/categorias')
       .then(response => {
@@ -44,7 +44,7 @@ export default function ProdutosPage() {
       })
   }, [])
 
-  // Carregar produtos (todos ou por categoria)
+  
   useEffect(() => {
     const endpoint = categoriaSelecionada
       ? `/v1/produtos/categoria/${categoriaSelecionada}`
@@ -69,7 +69,7 @@ export default function ProdutosPage() {
       <Navbar />
 
       <div className="p-6">
-        {/* Filtro por categoria */}
+       
         <div className="mb-6">
           <label htmlFor="categoria" className="block text-sm font-medium text-gray-700 mb-2">
             Filtrar por categoria:
@@ -92,7 +92,7 @@ export default function ProdutosPage() {
           </select>
         </div>
 
-        {/* Cabeçalho e botão de limpar filtro */}
+       
         {!loading && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">
@@ -111,7 +111,7 @@ export default function ProdutosPage() {
           </div>
         )}
 
-        {/* Lista de produtos */}
+       
         {loading ? (
           <p>Carregando produtos...</p>
         ) : (

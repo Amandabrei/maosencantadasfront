@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import api from "../../../../services/api";
+import api from "../../../../../services/api";
 
 interface Produto {
   id?: number;
@@ -45,7 +45,7 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [artistas, setArtistas] = useState<Artista[]>([]);
 
-  // Carregar categorias e artistas
+  
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -69,7 +69,7 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
     fetchArtistas();
   }, []);
 
-  // Preencher form ao editar
+  
   useEffect(() => {
     if (produto) {
       setForm(produto);
@@ -184,7 +184,7 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
           className="border p-2 rounded"
         />
 
-        {/* Select Categoria */}
+        
         <select
           name="categoriaId"
           value={form.categoriaId}
@@ -198,7 +198,7 @@ export default function FormProduto({ produto, onSave, onCancel }: FormProdutoPr
           ))}
         </select>
 
-        {/* Select Artista */}
+        
         <select
           name="artistaId"
           value={form.artistaId}

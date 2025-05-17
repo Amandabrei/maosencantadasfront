@@ -6,7 +6,7 @@ export default function ProdutoCard({ produto }: { produto: any }) {
   const router = useRouter()
 
   const handleVerProduto = () => {
-    router.push(`/todos-produtos/${produto.id}`) // Redireciona para a página de detalhes do produto
+    router.push(`/todos-produtos/${produto.id}`) 
   }
 
   const imagemUrlCompleta = produto.imagemUrl
@@ -25,9 +25,7 @@ export default function ProdutoCard({ produto }: { produto: any }) {
         <p className="text-sm text-gray-600 mt-1 h-[60px] overflow-hidden">
           {produto.descricao}
         </p>
-        <p className="text-md text-gray-800 font-semibold mt-2">
-          Preço: {produto.preco ? `R$ ${produto.preco.toFixed(2)}` : 'Preço não disponível'}
-        </p>
+       
       </div>
 
       <button

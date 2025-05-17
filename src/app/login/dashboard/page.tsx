@@ -7,7 +7,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       router.push('/login');
     }
@@ -16,7 +16,7 @@ export default function DashboardPage() {
   return (
     <div>
       <h1>Área Admin</h1>
-      <p>Login realizsado com sucesso.</p>
+      <p>Login realizado com sucesso.</p>
     </div>
   );
 }

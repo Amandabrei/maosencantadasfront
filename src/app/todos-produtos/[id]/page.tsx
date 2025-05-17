@@ -28,31 +28,28 @@ export default function ProdutoDetalhes({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token') // Recupera o token do localStorage
-
-    if (!token) {
-      console.error('Token não encontrado')
-      setLoading(false)
-      return
-    }
-
-    api.get(`/v1/produtos/${params.id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // Passa o token no cabeçalho
-      },
-    })
+    api.get(`/v1/produtos/${params.id}`)
       .then((response) => {
         setProduto(response.data)
-        setLoading(false)
       })
       .catch((error) => {
         console.error('Erro ao carregar o produto:', error)
+      })
+      .finally(() => {
         setLoading(false)
       })
   }, [params.id])
 
   const handlePedirOrcamento = () => {
-    router.push(`/login-orcamento?produtoId=${produto?.id}`)
+    const token = localStorage.getItem('token')
+    
+    if (!token) {
+    
+      router.push(`/login?redirect=/orcamento?produtoId=${produto?.id}`)
+    } else {
+      
+      router.push(`/orcamento?produtoId=${produto?.id}`)
+    }
   }
 
   if (loading) return <p>Carregando produto...</p>
@@ -65,7 +62,7 @@ export default function ProdutoDetalhes({ params }: { params: { id: string } }) 
   return (
     <div>
       <Header />
-      <Navbar />g
+      <Navbar />
 
       <div className="flex flex-col md:flex-row p-6">
         <div className="md:w-1/2">

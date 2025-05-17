@@ -1,26 +1,22 @@
-import axios from 'axios';
+import { api } from './api';
 
-const API = axios.create({
-  baseURL: 'http://localhost:8080/api',
-});
-
-const login = async (login: string, password: string): Promise<boolean> => {
+export const authenticate = async (login: string, password: string): Promise<string | null> => {
   try {
-    const response = await API.post('/auth/login', { login, password });
+    const response = await api.post('/auth/login', { login, password });
     const { token } = response.data;
-    sessionStorage.setItem('token', token);
-    return true;
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('token', token);
+    }
+    return token;
   } catch (error) {
     console.error('Erro no login:', error);
-    return false;
+    return null;
   }
 };
 
-const getToken = (): string | null => {
-  return sessionStorage.getItem('token');
-};
-
-export default {
-  login,
-  getToken,
+export const getToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return sessionStorage.getItem('token');
+  }
+  return null;
 };

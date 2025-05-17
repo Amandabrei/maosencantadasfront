@@ -45,7 +45,7 @@ export default function ProdutoDetalhes({ params }: { params: { id: string } }) 
     
     if (!token) {
     
-      router.push(`/login?redirect=/orcamento?produtoId=${produto?.id}`)
+      router.push(`/register?redirect=/orcamento?produtoId=${produto?.id}`)
     } else {
       
       router.push(`/orcamento?produtoId=${produto?.id}`)

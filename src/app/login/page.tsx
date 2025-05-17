@@ -2,24 +2,26 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import authService from '../../services/authService';
+import { authenticate, getToken } from '../../services/authService';
+
 
 export default function LoginPage() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  
+  
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault(); // OK
+  const token = await authenticate(login, password); 
+  if (token) {
+    router.push('/admin/artistas');
+  } else {
+    alert('Login ou senha inválidos');
+  }
+};
 
-    const success = await authService.login(login, password);
-
-    if (success) {
-      router.push('/dashboard'); // depois coloco a pagina correta
-    } else {
-      alert('Login ou senha inválidos');
-    }
-  };
 
   return (
     <div style={{ padding: 40 }}>

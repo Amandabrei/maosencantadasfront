@@ -1,16 +1,17 @@
 import axios from 'axios';
-import authService from './authService';
+import { getToken } from './authService';
 
 export const api = axios.create({
   baseURL: 'http://localhost:8080/api',
 });
 
-// Interceptor que injeta o token no header Authorization
 api.interceptors.request.use(
   (config) => {
-    const token = authService.getToken();
+    const token = getToken();
 
-    if (token) {
+    const isPublicEndpoint = config.url?.includes("/v1/artistas") || config.url?.includes("/v1/categorias") || config.url?.includes("/v1/produtos");
+
+    if (token && config.headers && !isPublicEndpoint) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 

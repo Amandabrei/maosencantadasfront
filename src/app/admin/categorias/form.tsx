@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../types/AuthContext";
-import api from "../../../services/api";
+import { api } from "../../../services/api";
 
 interface CategoriaForm {
   id?: number;

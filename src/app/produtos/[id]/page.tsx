@@ -47,7 +47,7 @@ export default function ProdutosPorArtista() {
 
   const handleSolicitarOrcamento = () => {
     
-    router.push('/login'); 
+    router.push('/register'); 
   };
 
   if (loading) {

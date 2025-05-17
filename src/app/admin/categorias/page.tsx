@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import api from "../../../services/api";
+import { api } from "../../../services/api";
 import Link from "next/link";
 import FormCategoria from "./form";
 
